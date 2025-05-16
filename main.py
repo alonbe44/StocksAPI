@@ -14,16 +14,25 @@ top_market_cap = [
     "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "BRK-B", "TSLA", "LLY", "JPM",
     "UNH", "V", "JNJ", "WMT", "MA", "AVGO", "PG", "HD", "XOM", "MRK"
 ]
+def get_single_Stock_Data(ticker):
+    stock = yf.Ticker(ticker)
+    price = stock.history(period="1d")["Close"].iloc[-1]
+    print(f"{ticker}: ${price:.2f}")
+    return f"{price}  USD "
+
+
 
 def get_stock_data(ticker_list):
+    stock_data = {}  # Use a dictionary, not a list
     for symbol in ticker_list:
         try:
             stock = yf.Ticker(symbol)
-            print("website = "+stock.info.get("website"))  # e.g., 'https://www.apple.com/'
             price = stock.history(period="1d")["Close"].iloc[-1]
-            print(f"{symbol}: ${price:.2f}")
+            stock_data[symbol] = price  # Store symbol: price pair
         except Exception as e:
-            print(f"Error fetching data for {symbol}: {e}")
+            stock_data[symbol] = f"Error: {e}"  # Store error message for the symbol
+    return stock_data
+
 
 def get_sp500_tickers():
     url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
@@ -54,17 +63,13 @@ def get_stock_logo(ticker):
     for logo in tickers:
         print(get_clearbit_logo_from_yfinance(logo))
 
-
-
+def get_stock_history(ticker):
+    stock = yf.Ticker(ticker)
+    # Get historical market data (example: last 6 months)
+    hist = stock.history(period="6mo", interval="1d")
+    pd.set_option('display.max_columns', None)
+    return str(hist)
 # get_stock_logo(faang_plus)
 
-# Load the ticker (example: Apple Inc.)
-ticker = yf.Ticker("AAPL")
-
-# Get historical market data (example: last 6 months)
-hist = ticker.history(period="6mo")
-
-# Print the data
-print(hist)
 
 # hist = ticker.history(period="5d", interval="1h")
