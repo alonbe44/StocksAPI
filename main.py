@@ -50,6 +50,21 @@ def get_clearbit_logo_from_yfinance(ticker):
 
 sp500_tickers = get_sp500_tickers()
 
+def get_stock_logo(ticker):
+    for logo in tickers:
+        print(get_clearbit_logo_from_yfinance(logo))
 
 
-print(get_clearbit_logo_from_yfinance("AAPL"))
+
+# get_stock_logo(faang_plus)
+
+# Load the ticker (example: Apple Inc.)
+ticker = yf.Ticker("AAPL")
+
+# Get historical market data (example: last 6 months)
+hist = ticker.history(period="6mo")
+
+# Print the data
+print(hist)
+
+# hist = ticker.history(period="5d", interval="1h")
