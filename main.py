@@ -1,6 +1,11 @@
+from datetime import timedelta
+
 import yfinance as yf
 import pandas as pd
 from urllib.parse import urlparse
+
+from flask import jsonify
+from flask_jwt_extended import create_access_token
 
 # Example: FAANG stocks
 tickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA"]
@@ -70,6 +75,19 @@ def get_stock_history(ticker):
     pd.set_option('display.max_columns', None)
     return str(hist)
 # get_stock_logo(faang_plus)
-
-
 # hist = ticker.history(period="5d", interval="1h")
+
+
+
+# def generate_token(identity: str, expires_hours: int = 1):
+#     """
+#     Generate a JWT token for the given identity (e.g., username).
+#
+#     :param identity: The user identity (usually username or user ID).
+#     :param expires_hours: Token expiration time in hours.
+#     :return: JWT access token string.
+#     """
+#     return create_access_token(identity=identity, expires_delta=timedelta(hours=expires_hours))
+#
+#
+# print(generate_token("admin"))
