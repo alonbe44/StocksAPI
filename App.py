@@ -68,8 +68,6 @@ def protected():
 @app.route('/',methods=['GET'])
 def index():
     return jsonify("Stocks API Connection Pass"),200
-
-
 @app.route('/allStocks',methods=['GET'])
 def AllStocks():
     return jsonify(main.get_sp500_tickers()),200
