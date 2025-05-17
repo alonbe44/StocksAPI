@@ -1,8 +1,9 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 import yfinance as yf
 import pandas as pd
 from urllib.parse import urlparse
+import pandas_market_calendars as mcal
 
 from flask import jsonify
 from flask_jwt_extended import create_access_token
@@ -78,16 +79,11 @@ def get_stock_history(ticker):
 # hist = ticker.history(period="5d", interval="1h")
 
 
+# to slow api bad to be selected
 
-# def generate_token(identity: str, expires_hours: int = 1):
-#     """
-#     Generate a JWT token for the given identity (e.g., username).
-#
-#     :param identity: The user identity (usually username or user ID).
-#     :param expires_hours: Token expiration time in hours.
-#     :return: JWT access token string.
-#     """
-#     return create_access_token(identity=identity, expires_delta=timedelta(hours=expires_hours))
-#
-#
-# print(generate_token("admin"))
+def get_market_status():
+    return yf.Market("USA").status
+
+
+
+

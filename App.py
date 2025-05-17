@@ -1,28 +1,10 @@
-from authlib.oauth2.rfc6750 import BearerToken
-from flask import jsonify, request
 import main
 from flask import Flask, redirect, url_for, session
-from authlib.integrations.flask_client import OAuth
-from functools import wraps
-from flask import Flask, request, jsonify
-from authlib.integrations.flask_oauth2 import AuthorizationServer, ResourceProtector, current_token
-from authlib.oauth2.rfc6749 import grants
-from werkzeug.security import gen_salt
-from authlib.oauth2.rfc6749 import ClientAuthentication
-from authlib.oauth2.rfc6749.errors import InvalidClientError
-
-from flask import Flask, redirect, url_for, session
-from authlib.integrations.flask_client import OAuth
-
-
-from flask import Flask, request, jsonify
-from flask_jwt_extended import (
-    JWTManager, create_access_token, jwt_required, get_jwt_identity
-)
+from flask import request, jsonify
+from flask_jwt_extended import (JWTManager, create_access_token, jwt_required, get_jwt_identity)
 from datetime import timedelta
 
 app = Flask(__name__)
-app.secret_key = 'test'
 
 
 
@@ -30,14 +12,16 @@ app.secret_key = 'test'
 app.config['JWT_SECRET_KEY'] = 'super-secret-key'  # Change this!
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 
+
+# initialize Json Web Token to be related to this app
 jwt = JWTManager(app)
 
-# Dummy user data (replace with DB in real app)
+#UserName and Password
 USERS = {
     "admin": "admin"
 }
 
-# Route to login and get a token
+# Route to login and return a token
 @app.route('/login', methods=['POST'])
 def login():
     username = request.json.get('username')
@@ -61,29 +45,40 @@ def protected():
     return jsonify(logged_in_as=current_user), 200
 
 
-
-
-
 # for connectivity test only
 @app.route('/',methods=['GET'])
 def index():
     return jsonify("Stocks API Connection Pass"),200
+
+# return top 500 Stocks
 @app.route('/allStocks',methods=['GET'])
+@jwt_required()
 def AllStocks():
     return jsonify(main.get_sp500_tickers()),200
 
+# return specific Stock Price for Current Date.
 @app.route('/Stocks/<string:StockName>',methods=['GET'])
+@jwt_required()
 def Get_Stock(StockName):
     return jsonify(main.get_single_Stock_Data(StockName)),200
 
+# return specific Stock Price for last 6 months
 @app.route('/Stocks/<string:StockName>/history',methods=['GET'])
 @jwt_required()
 def Get_Stock_History(StockName):
     return (main.get_stock_history(StockName)),200
 
+# return Fang Companies Stock Price for Today
 @app.route('/FaangStocks',methods=['GET'])
+@jwt_required()
 def Get_Faang_Stock():
     return (main.get_stock_data(main.faang_plus)),200
+
+
+@app.route('/marketStatus',methods=['GET'])
+@jwt_required()
+def Get_Market_Status():
+    return main.get_market_status()
 
 
 if __name__ == '__main__':
